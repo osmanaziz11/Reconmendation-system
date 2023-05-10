@@ -25,36 +25,50 @@ class EstimatePrice:
             productNames = [element.text for element in product_elements]
             product_elements = self.driver.find_elements(By.CSS_SELECTOR, 'div.price--NVB62')
             productPrice = [element.text for element in product_elements]
-            print(productNames)
-            print(productPrice)
-            return {'Product':'title', 'Price':'price'}
+            return {'Product':productNames, 'Price':productPrice}
         except:
             return 0
 
-    def OLX(self):
+    def OLX(self,slug):
         try:
-            self.driver.get(f"https://www.olx.com.pk/items/q-Iphone-14")
+            print(slug)
+            self.driver.get(f"https://www.olx.com.pk/items/q-{slug}")
            
             product_elements = self.driver.find_elements(By.CSS_SELECTOR, 'div.a5112ca8')
             productNames = [element.text for element in product_elements]
             product_elements = self.driver.find_elements(By.CSS_SELECTOR, 'span._95eae7db')
             productPrices = [element.text for element in product_elements]
-            print(productNames)
-            print(productPrices)
 
-            return {'Product':'title', 'Price':f"Rs. "}
+            
+            return {'Product':productNames, 'Price':productPrices}
         except:
             return 0
         
    
-    
+    def calculate(self,slug,nameList,priceList):
+        targetStr=slug.split(' ')
+        for index, name in enumerate(nameList):
+            found_all=True
+            for str in targetStr:
+                if str not in name:
+                    found_all=False
+                    break
+            
+            if not found_all:
+                del priceList[index]
+
+        
+        pass
+
     def Scrape(self,slug):
         try:
             return {
-            'Amazon':self.Amazon(slug),
-            'Daraz':self.Daraz(slug),
+            'OLX':self.OLX(slug.replace(" ","-")),
+            # 'Daraz':self.Daraz(slug),
             # 'AliExpress':self.AliExpress(slug),
         }
         except:
             return 0
 
+a=EstimatePrice()
+print(a.Scrape('Washing-machine'))

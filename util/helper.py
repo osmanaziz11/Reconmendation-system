@@ -1,10 +1,10 @@
-from dotenv import load_dotenv
+import pandas as pd
 import requests
+import pickle
 import json
 import csv
 import os
 
-load_dotenv()
 def getCategories():
     try:
         return json.loads(requests.get(f"{os.getenv('SERVER')}/category/fetch").text)['categoryList']
@@ -120,3 +120,27 @@ def writeCSV(products):
     except Exception as error:
         return error
     
+def readCSV():
+    try:
+        return pd.read_csv(os.getenv('DATASET_PATH'),encoding="ISO-8859-1")
+    except Exception as error:
+        return False
+
+def preprocess(rawData):
+    try:
+        rawData['text']=rawData['name']+ " "+rawData['description']+" "+rawData['categories']
+        rawData=rawData.drop(['name','description','categories','price'],axis=1)
+        return rawData
+    except Exception as error:
+        return False
+    
+def saveModel(JSON):
+    try:
+        with open(f"{os.getenv('VECTOR_PATH')}vector.pickle", 'wb') as f:
+            pickle.dump(JSON['vector'], f)
+        
+        with open(f"{os.getenv('MODEL_PATH')}model.pickle", 'wb') as f:
+            pickle.dump(JSON['model'], f)
+        return True
+    except Exception as error:
+        return False
