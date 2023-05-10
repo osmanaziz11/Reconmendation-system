@@ -136,10 +136,9 @@ def preprocess(rawData):
     
 def saveModel(JSON):
     try:
-        with open(f"{os.getenv('VECTOR_PATH')}vector.pickle", 'wb') as f:
+        with open(f"{os.getenv('VECTOR_PATH')}", 'wb') as f:
             pickle.dump(JSON['vector'], f)
-        
-        with open(f"{os.getenv('MODEL_PATH')}model.pickle", 'wb') as f:
+        with open(f"{os.getenv('MODEL_PATH')}", 'wb') as f:
             pickle.dump(JSON['model'], f)
         return True
     except Exception as error:

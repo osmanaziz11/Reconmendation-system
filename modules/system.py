@@ -46,17 +46,14 @@ class System:
 
     def Train(self):
         try:
-            rawDataset=helper.readCSV()     # Pandas Dataframe
+            rawDataset=helper.readCSV()  
             cleanDataset=helper.preprocess(rawDataset)
             cleanDataset['text'] = cleanDataset['text'].apply(self.clean_txt)
             self.tfidf_vector= self.tfidf_vectorizer.fit_transform((cleanDataset['text'])) 
-            return {'status':1,'message':'System update successfully.'} if helper.saveModel({'vector':self.tfidf_vectorizer,'model':self.tfidf_vector}) else False
+            return {'status':1,'message':'System update successfully.'} if helper.saveModel({'vector':self.tfidf_vectorizer,'model':self.tfidf_vector}) else {'status':0,'message':'System update failed without any exception.'}
         except Exception as error:
-            return {'status':0,'message':'System update failed.'}
+            return {'status':0,'message':f'System update failed with exception! Error: {error}'}
 
     def update(self):
-        return self.retrieveData()
+        return self.Train() if self.retrieveData() else {'status':0,'message':f'System update failed, Issue in retreiving Data.'}
         
-    
-ints=System()
-print(ints.update())
