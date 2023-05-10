@@ -3,8 +3,6 @@ from selenium import webdriver
 from selenium.webdriver import  ChromeOptions
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-import requests
-import json
 
 # Selenium Configuration
 options=ChromeOptions()
@@ -25,26 +23,27 @@ class EstimatePrice:
             productNames = [element.text for element in product_elements]
             product_elements = self.driver.find_elements(By.CSS_SELECTOR, 'div.price--NVB62')
             productPrice = [element.text for element in product_elements]
-            return {'Product':productNames, 'Price':productPrice}
+            res=self.calculate(slug,productNames,productPrice)
+            array_int = [int(i) for i in res]
+            average = sum(array_int) / len(array_int)
+            return {'average':average}
         except:
             return 0
 
     def OLX(self,slug):
         try:
-            print(slug)
             self.driver.get(f"https://www.olx.com.pk/items/q-{slug}")
-           
             product_elements = self.driver.find_elements(By.CSS_SELECTOR, 'div.a5112ca8')
             productNames = [element.text for element in product_elements]
             product_elements = self.driver.find_elements(By.CSS_SELECTOR, 'span._95eae7db')
             productPrices = [element.text for element in product_elements]
-
-            
-            return {'Product':productNames, 'Price':productPrices}
+            res=self.calculate(slug.replace(" ","-"),productNames,productPrices)
+            array_int = [int(i) for i in res]
+            average = sum(array_int) / len(array_int)
+            return {'average':average}
         except:
             return 0
         
-   
     def calculate(self,slug,nameList,priceList):
         targetStr=slug.split(' ')
         for index, name in enumerate(nameList):
@@ -53,19 +52,15 @@ class EstimatePrice:
                 if str not in name:
                     found_all=False
                     break
-            
             if not found_all:
                 del priceList[index]
-
-        
-        pass
+        return priceList
 
     def Scrape(self,slug):
         try:
             return {
-            'OLX':self.OLX(slug.replace(" ","-")),
-            # 'Daraz':self.Daraz(slug),
-            # 'AliExpress':self.AliExpress(slug),
+            'OLX':self.OLX(slug),
+            'Daraz':self.Daraz(slug),
         }
         except:
             return 0
