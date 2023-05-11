@@ -1,26 +1,37 @@
 
-from flask import Flask,jsonify
-import modules.estimation as estimation
+import modules.reconmendation as rs
+import modules.estimation as es
+from flask import Flask,jsonify,request
+import modules.system as sys
 
 app = Flask(__name__)
 
-
-@app.route('/api/<product>',methods=['GET'])
-def main(product):
-    resp=estimation.Handler()
-    res=resp.Scrape(product)
-    if res!= 0:
-        return jsonify({"status":1,"Details":res})
-    else:
-        return jsonify({"status": 0})
+@app.route('/api/estimation/<product_name>',methods=['GET'])
+def estimation(product_name):
+    instance=es.EstimatePrice()
+    result=instance.Scrape(product_name)
+    return jsonify(result)
+    
     
 @app.route('/api/system-update/',methods=['GET'])
-def update():
-    return jsonify({"status": 0})
+def system():
+    instance=sys.System()
+    result=instance.Update()
+    return jsonify(result)
 
-@app.route('/api/system/content',methods=['GET'])
-def update():
-    return jsonify({"status": 0})
+@app.route('/api/reconmendation/',methods=['POST'])
+def reconmendation():
+    instance=rs.ReconmendationSys()
+    data={
+        'id':[request.json['_id']],
+        'name':[request.json['name']],
+        'description':[request.json['description']],
+        'categories':[request.json['categories']],
+        'price':[request.json['price']],
+    }
+    result=instance.contentFiltering(data)
+    return jsonify(result)
+
 
 
 @app.route('/',methods=['GET'])

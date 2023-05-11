@@ -7,7 +7,7 @@ import os
 class System:
     def __init__(self):
         self.tfidf_vectorizer = TfidfVectorizer()
-        # helper.downloadNLTK()
+        helper.downloadNLTK()
         load_dotenv() 
     
     def retrieveData(self):
@@ -32,5 +32,3 @@ class System:
     def Update(self):
         return self.Train() if self.retrieveData() else {'status':0,'message':f'System update failed, Issue in retreiving Data.'}
         
-s=System()
-print(s.Train())
