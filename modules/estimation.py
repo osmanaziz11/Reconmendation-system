@@ -17,7 +17,6 @@ class EstimatePrice:
     def __init__(self):
         self.driver = webdriver.Chrome()
         
-
     def Daraz(self,slug):
         try:
             self.driver.get(f"https://www.daraz.pk/catalog/?q={slug}&_keyori=ss&from=input&spm=a2a0e.home.search.go.35e34937C0KdMd")
@@ -41,30 +40,32 @@ class EstimatePrice:
             product_elements = self.driver.find_elements(By.CSS_SELECTOR, 'span._95eae7db')
             productPrices = [element.text for element in product_elements]
             res=self.calculate(slug,productNames,productPrices)
-            print(res)
-            # array_int = [int(i.replace(',','')) for i in res]
-            # average = sum(array_int) / len(array_int)
-            return {'average':'average'}
+        
+            array_int = [int(i.replace(',','')) for i in res]
+            average = sum(array_int) / len(array_int)
+            return {'average':average}
         except Exception as error:
             print(error)
             return 0
         
     def calculate(self, slug, nameList, priceList):
         targetStr = slug.split(' ')
+
         newList = []
-        
+       
         for index, name in enumerate(nameList):
             
             found_all = True
             for str in targetStr:
-                if str not in name:
+                if str.lower() not in name.lower():
                     found_all = False
+                    print(str)
+                    print(name)
                     break
             if found_all:
                 newList.append(priceList[index].split(' ')[1])
+        print(newList)
         return newList
-
-   
 
     def Scrape(self,slug):
         try:
