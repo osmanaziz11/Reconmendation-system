@@ -16,6 +16,14 @@ class EstimatePrice:
     
     def __init__(self):
         self.driver = webdriver.Chrome()
+
+    def computeAvg(self,res):
+        try:
+            array_int = [int(i.replace(',','')) for i in res]
+            average = sum(array_int) / len(array_int)
+            return average
+        except Exception as error:
+            return 0
         
     def Daraz(self,slug):
         try:
@@ -25,11 +33,9 @@ class EstimatePrice:
             product_elements = self.driver.find_elements(By.CSS_SELECTOR, 'div.price--NVB62')
             productPrice = [element.text for element in product_elements]
             res=self.calculate(slug,productNames,productPrice)
-            array_int = [int(i.replace(',','')) for i in res]
-            average = sum(array_int) / len(array_int)
-            return {'average':average}
+            return self.computeAvg(res)
         except Exception as error:
-            print(error)
+            # print(error)
             return 0
 
     def OLX(self,slug):
@@ -40,31 +46,22 @@ class EstimatePrice:
             product_elements = self.driver.find_elements(By.CSS_SELECTOR, 'span._95eae7db')
             productPrices = [element.text for element in product_elements]
             res=self.calculate(slug,productNames,productPrices)
-        
-            array_int = [int(i.replace(',','')) for i in res]
-            average = sum(array_int) / len(array_int)
-            return {'average':average}
+            return self.computeAvg(res)
         except Exception as error:
-            print(error)
+            # print(error)
             return 0
         
     def calculate(self, slug, nameList, priceList):
         targetStr = slug.split(' ')
-
         newList = []
-       
         for index, name in enumerate(nameList):
-            
             found_all = True
             for str in targetStr:
                 if str.lower() not in name.lower():
                     found_all = False
-                    print(str)
-                    print(name)
                     break
             if found_all:
                 newList.append(priceList[index].split(' ')[1])
-        print(newList)
         return newList
 
     def Scrape(self,slug):
