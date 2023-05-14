@@ -6,7 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 # Selenium Configuration
 options=ChromeOptions()
-options.headless=True
+options.headless=False
 options.add_argument('--log-level=1')
 user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36'
 options.add_argument(f'user-agent={user_agent}')

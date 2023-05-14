@@ -1,10 +1,12 @@
 
+from flask import Flask,jsonify,request
 import modules.reconmendation as rs
 import modules.estimation as es
-from flask import Flask,jsonify,request
 import modules.system as sys
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/api/estimation/<product_name>',methods=['GET'])
 def estimation(product_name):
@@ -30,9 +32,8 @@ def reconmendation():
         'price':[request.json['price']],
     }
     result=instance.contentFiltering(data)
+    
     return jsonify(result)
-
-
 
 @app.route('/',methods=['GET'])
 def index():
